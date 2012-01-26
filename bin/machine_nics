@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+# -*- mode: ruby -*-
+require 'machine_nics'
+include MachineNics
+config = MachineNics::Config.instance
+config.parse
+tree = MachineNics::Tree.create_from_hash(config.definition)
+
+actions = MachineNics::Actions.new(config.type)
+
+tree.traverse_df(tree.root, 0) do |nic, level|
+  if level > 0
+    log.level = level
+    cmd = actions.dispatch(config.action, nic, tree.children[nic])
+    prefix = "  "*level
+    log.debug "=> #{config.action.capitalize} #{nic.upcase} using:"
+    cmd.flatten.each {|c| log.debug "  * #{c}"}
+    unless config.dry_run
+      out = cmd.flatten.each {|c| `#{c} 2>/dev/null`}
+    end
+  end
+end
