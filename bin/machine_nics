@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # -*- mode: ruby -*-
-require 'machine_nics'
+require 'machine-nics'
 include MachineNics
 config = MachineNics::Config.instance
 config.parse

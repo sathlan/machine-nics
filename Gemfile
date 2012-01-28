@@ -1,4 +1,4 @@
 source "http://rubygems.org"
 
-# Specify your gem's dependencies in machine_nics.gemspec
+# Specify your gem's dependencies in machine-nics.gemspec
 gemspec

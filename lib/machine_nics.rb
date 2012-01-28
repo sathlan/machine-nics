@@ -1,10 +1,10 @@
 require 'rubygems'
 require 'bundler/setup'
-require "machine_nics/logger"
-require "machine_nics/version"
-require "machine_nics/config"
-require "machine_nics/tree"
-require "machine_nics/actions"
+require "machine-nics/logger"
+require "machine-nics/version"
+require "machine-nics/config"
+require "machine-nics/tree"
+require "machine-nics/actions"
 
 module MachineNics
   def log

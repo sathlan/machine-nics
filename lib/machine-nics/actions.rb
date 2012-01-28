@@ -1,9 +1,9 @@
 require 'rbconfig'
 require 'singleton'
-require 'machine_nics/logger'
-require 'machine_nics/actions/linux'
-require 'machine_nics/actions/test'
-require 'machine_nics/actions/freebsd'
+require 'machine-nics/logger'
+require 'machine-nics/actions/linux'
+require 'machine-nics/actions/test'
+require 'machine-nics/actions/freebsd'
 
 module MachineNics
   class Actions

@@ -1,5 +1,5 @@
 require 'optparse'
-require 'machine_nics/actions'
+require 'machine-nics/actions'
 require 'singleton'
 require 'pathname'
 require 'psych'

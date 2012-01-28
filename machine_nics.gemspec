@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "machine_nics/version"
+require "machine-nics/version"
 
 Gem::Specification.new do |s|
-  s.name        = "machine_nics"
+  s.name        = "machine-nics"
   s.version     = MachineNics::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["sathlan"]
@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.summary     = %q{TODO: Write a gem summary}
   s.description = %q{TODO: Write a gem description}
 
-  s.rubyforge_project = "machine_nics"
+  s.rubyforge_project = "machine-nics"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
