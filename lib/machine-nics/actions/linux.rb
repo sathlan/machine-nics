@@ -6,23 +6,23 @@ module MachineNics
         cmds.push(%Q!sudo sh -c 'echo "+#{params[:name]}" > /sys/class/net/bonding_masters';!)
         cmds.push(%Q!sudo sh -c 'echo "layer3+4"    > /sys/class/net/#{params[:name]}/bonding/xmit_hash_policy'!)
         cmds.push(%Q!sudo sh -c 'echo balance-xor   > /sys/class/net/#{params[:name]}/bonding/mode'!)
-        cmds.push(%Q!sudo sh -c 'echo 100           > /sys/class/net/bond0/bonding/miimon'!)
+        cmds.push(%Q!sudo sh -c 'echo 100           > /sys/class/net/#{params[:name]}/bonding/miimon'!)
         cmds.push(%Q!sudo sh -c 'sudo ip l set dev #{params[:name]} up'!)
         params[:members].each do |nic|
-          cmds.push(%Q!'echo +#{nic}        > /sys/class/net/#{params[:name]}/bonding/slaves'!)
+          cmds.push(%Q!sudo sh -c 'echo +#{nic}        > /sys/class/net/#{params[:name]}/bonding/slaves'!)
         end
         cmds
       end
 
       def vlan_create(params)
-        cmd = ["sudo vconfig add #{params[:members].first} #{params[:vid]} "]
+        cmd = ["sudo vconfig add #{params[:members].first} #{params[:vid]}"]
       end
 
       def bridge_create(params)
         cmds = []
-        cmds.push(%Q!"sudo brctl addbr #{params[:name]} "!)
+        cmds.push(%Q!sudo brctl addbr #{params[:name]}!)
         params[:members].each do |nic|
-          cmds.push("sudo brctl addif #{params[:name]} #{nic} ")
+          cmds.push("sudo brctl addif #{params[:name]} #{nic}")
         end
         cmds
       end
@@ -52,11 +52,13 @@ module MachineNics
         true
       end
       def up(params)
-        cmd = "ip l set dev #{params[:name]} up"
+        cmd = "sudo ip l set dev #{params[:name]} up"
         [ cmd ]
       end
+      def vlan_up(params)
+        ["sudo ip l set dev #{params[:members].first}.#{params[:vid]} up" ]
+      end
       alias :lagg_up :up
-      alias :vlan_up :up
       alias :bridge_up :up
       alias :tap_up :up
 
