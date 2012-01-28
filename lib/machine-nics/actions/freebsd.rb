@@ -2,9 +2,9 @@ module MachineNics
   class Actions
     module Freebsd
       def lagg_create(params)
-        cmd = "sudo ifconfig #{params[:name]} create mtu #{params[:mtu]} laggproto loadbalance "
+        cmd = "sudo ifconfig #{params[:name]} create mtu #{params[:mtu]} laggproto loadbalance"
         params[:members].each do |nic|
-          cmd += " laggport #{nic} "
+          cmd += " laggport #{nic}"
         end
         [cmd]
       end
@@ -13,11 +13,11 @@ module MachineNics
       end
 
       def bridge_create(params)
-        cmd_before = "sudo ifconfig #{params[:name]} create 2>/dev/null; "
+        cmd_before = "sudo ifconfig #{params[:name]} create 2>/dev/null;"
         cmd_pre = "sudo ifconfig #{params[:name]} "
         cmds = []
         params[:members].each do |nic|
-          cmds << "#{cmd_pre} addm #{nic} "
+          cmds << "#{cmd_pre} addm #{nic}"
         end
         cmd = [cmd_before, cmds]
       end
