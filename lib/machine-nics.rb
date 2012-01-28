@@ -10,4 +10,7 @@ module MachineNics
   def log
     MachineNics::Log.instance
   end
+  def config
+    MachineNics::Config.instance
+  end
 end
