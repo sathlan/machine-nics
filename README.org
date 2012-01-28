@@ -1,0 +1,157 @@
+* Machine-Nics
+** Description
+
+Setup complex network for use with virtual machines.  Work under
+Freebsd and Linux.
+
+** Synopsis
+
+: machine-nics -f <yaml description file> -t <Linux|Freebsd> -a <create|destroy|up> [-n]
+
+=-n= is for dry-run, nothing is created, and debug information is
+printed on screen.
+
+** Usage
+
+: gem install machine-nics
+
+Create a bridge (bridge0) composed of aggregated interfaces (lagg0
+with tap101 and tap102), tap interfaces with mtu of 1496 and a vlan
+with vid 101:
+
+: cat desc.yaml
+: :machine-1:
+:   :bridge0:
+:   - :tap201_1496
+:   - :tap202_1496
+:   - :lagg0:
+:     - :tap101_1496
+:     - :tap102_1496
+:   :vlan101: :tap101
+
+First for Linux in dry-run mode (-n) :
+
+: % machine-nics -f desc.yaml -t Linux -a create -n
+: D, [12:23:34#6668] DEBUG -- :       => Create TAP102_1496 using:
+: D, [12:23:34#6668] DEBUG -- :         * sudo tunctl -t tap102
+: D, [12:23:34#6668] DEBUG -- :         * sudo ip l set dev tap102 mtu 1496
+: D, [12:23:34#6668] DEBUG -- :         * ip l set dev tap102 up
+: D, [12:23:34#6668] DEBUG -- :       => Create TAP101_1496 using:
+: D, [12:23:34#6668] DEBUG -- :         * sudo tunctl -t tap101
+: D, [12:23:34#6668] DEBUG -- :         * sudo ip l set dev tap101 mtu 1496
+: D, [12:23:34#6668] DEBUG -- :         * ip l set dev tap101 up
+: D, [12:23:34#6668] DEBUG -- :     => Create LAGG0 using:
+: D, [12:23:34#6668] DEBUG -- :       * sudo sh -c 'echo "+lagg0" > /sys/class/net/bonding_masters';
+: D, [12:23:34#6668] DEBUG -- :       * sudo sh -c 'echo "layer3+4"    > /sys/class/net/lagg0/bonding/xmit_hash_policy'
+: D, [12:23:34#6668] DEBUG -- :       * sudo sh -c 'echo balance-xor   > /sys/class/net/lagg0/bonding/mode'
+: D, [12:23:34#6668] DEBUG -- :       * sudo sh -c 'echo 100           > /sys/class/net/bond0/bonding/miimon'
+: D, [12:23:34#6668] DEBUG -- :       * sudo sh -c 'sudo ip l set dev lagg0 up'
+: D, [12:23:34#6668] DEBUG -- :       * 'echo +tap101        > /sys/class/net/lagg0/bonding/slaves'
+: D, [12:23:34#6668] DEBUG -- :       * 'echo +tap102        > /sys/class/net/lagg0/bonding/slaves'
+: D, [12:23:34#6668] DEBUG -- :       * ip l set dev lagg0 up
+: D, [12:23:34#6668] DEBUG -- :     => Create TAP202_1496 using:
+: D, [12:23:34#6668] DEBUG -- :       * sudo tunctl -t tap202
+: D, [12:23:34#6668] DEBUG -- :       * sudo ip l set dev tap202 mtu 1496
+: D, [12:23:34#6668] DEBUG -- :       * ip l set dev tap202 up
+: D, [12:23:34#6668] DEBUG -- :     => Create TAP201_1496 using:
+: D, [12:23:34#6668] DEBUG -- :       * sudo tunctl -t tap201
+: D, [12:23:34#6668] DEBUG -- :       * sudo ip l set dev tap201 mtu 1496
+: D, [12:23:34#6668] DEBUG -- :       * ip l set dev tap201 up
+: D, [12:23:34#6668] DEBUG -- :   => Create BRIDGE0 using:
+: D, [12:23:34#6668] DEBUG -- :     * "sudo brctl addbr bridge0 "
+: D, [12:23:34#6668] DEBUG -- :     * sudo brctl addif bridge0 tap201
+: D, [12:23:34#6668] DEBUG -- :     * sudo brctl addif bridge0 tap202
+: D, [12:23:34#6668] DEBUG -- :     * sudo brctl addif bridge0 lagg0
+: D, [12:23:34#6668] DEBUG -- :     * ip l set dev bridge0 up
+: D, [12:23:34#6668] DEBUG -- :     => Create TAP101 using:
+: D, [12:23:34#6668] DEBUG -- :       * sudo tunctl -t tap101
+: D, [12:23:34#6668] DEBUG -- :       * sudo ip l set dev tap101 mtu 1500
+: D, [12:23:34#6668] DEBUG -- :       * ip l set dev tap101 up
+: D, [12:23:34#6668] DEBUG -- :   => Create VLAN101 using:
+: D, [12:23:34#6668] DEBUG -- :     * sudo vconfig add tap101 101
+: D, [12:23:34#6668] DEBUG -- :     * ip l set dev vlan101 up
+
+The same for Freebsd:
+
+: % machine-nics -f desc.yaml -t Freebsd -a create -n
+: D, [12:25:06#7415] DEBUG -- :       => Create TAP102_1496 using:
+: D, [12:25:06#7415] DEBUG -- :         * sudo ifconfig tap102 create mtu 1496
+: D, [12:25:06#7415] DEBUG -- :         * sudo ifconfig tap102 up
+: D, [12:25:06#7415] DEBUG -- :       => Create TAP101_1496 using:
+: D, [12:25:06#7415] DEBUG -- :         * sudo ifconfig tap101 create mtu 1496
+: D, [12:25:06#7415] DEBUG -- :         * sudo ifconfig tap101 up
+: D, [12:25:06#7415] DEBUG -- :     => Create LAGG0 using:
+: D, [12:25:06#7415] DEBUG -- :       * sudo ifconfig lagg0 create mtu 1500 laggproto loadbalance  laggport tap101  laggport tap102
+: D, [12:25:06#7415] DEBUG -- :       * sudo ifconfig lagg0 up
+: D, [12:25:06#7415] DEBUG -- :     => Create TAP202_1496 using:
+: D, [12:25:06#7415] DEBUG -- :       * sudo ifconfig tap202 create mtu 1496
+: D, [12:25:06#7415] DEBUG -- :       * sudo ifconfig tap202 up
+: D, [12:25:06#7415] DEBUG -- :     => Create TAP201_1496 using:
+: D, [12:25:06#7415] DEBUG -- :       * sudo ifconfig tap201 create mtu 1496
+: D, [12:25:06#7415] DEBUG -- :       * sudo ifconfig tap201 up
+: D, [12:25:06#7415] DEBUG -- :   => Create BRIDGE0 using:
+: D, [12:25:06#7415] DEBUG -- :     * sudo ifconfig bridge0 create 2>/dev/null;
+: D, [12:25:06#7415] DEBUG -- :     * sudo ifconfig bridge0  addm tap201
+: D, [12:25:06#7415] DEBUG -- :     * sudo ifconfig bridge0  addm tap202
+: D, [12:25:06#7415] DEBUG -- :     * sudo ifconfig bridge0  addm lagg0
+: D, [12:25:06#7415] DEBUG -- :     * sudo ifconfig bridge0 up
+: D, [12:25:06#7415] DEBUG -- :     => Create TAP101 using:
+: D, [12:25:06#7415] DEBUG -- :       * sudo ifconfig tap101 create mtu 1500
+: D, [12:25:06#7415] DEBUG -- :       * sudo ifconfig tap101 up
+: D, [12:25:06#7415] DEBUG -- :   => Create VLAN101 using:
+: D, [12:25:06#7415] DEBUG -- :     * sudo ifconfig vlan101 create vlan 101 vlandev tap101
+: D, [12:25:06#7415] DEBUG -- :     * sudo ifconfig vlan101 up
+
+** YAML Description file
+The file must have a root node which identify the setup.  Usually this
+is the machine name for which the configuration is, but it can be
+anything.
+
+Then comes :
+ - a hash
+ - a array
+ - a symbole;
+
+Each element of the hash will become the "final" interface of your
+setup.  Everything under them will be used to describe composed
+interface.
+
+To describe a composed interface you can use a array or a hash.  Every
+hash must terminate either by a symbol, a array or a hash whose values
+are nil.  For instance this describe the same setup, bridge with two
+interfaces:
+
+  1. using a array;
+: :bridge0:
+:   - tap1
+:   - tap2
+  2. using a hash;
+: :bridge0:
+:   :tap1: nil
+:   :tap2: nil
+
+The first form is better.
+
+A simple interface is a =tap= device.  A composed interface is a:
+ - bridge;
+ - lagg;
+ - vlan;
+
+An <id> is only there to differentiate similar interface.  =tap101=
+and =tap102= are tap interfaces, whose id is different.
+
+For vlan there is a <vid> and optional <id> component.  This is useful
+if you want several interface tagged with the same vid. =vlan101=,
+=vlan10101= describe two vlan whose vid is 101.
+
+*** Type of interface avalaible
+
+ - =lagg<id>=: creates a aggregated link (usually name bond under
+   Linux and .. lagg under Freebsd).  Must be composed multiple of
+   simple interfaces or composed interface.  All must be the same MTU;
+ - =bridge<id>=: creates a bridge.  Can be composed of multiple simple
+   interface or composed interfaces.  All must be the same MTU;
+ - =vlan<vid>[<id>]:  Create a vlan.  Must be composed of a single
+   simple or composed interface.
+ - =tap<id>=: creates a tap interface.
+
