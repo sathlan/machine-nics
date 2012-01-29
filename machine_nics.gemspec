@@ -6,11 +6,16 @@ Gem::Specification.new do |s|
   s.name        = "machine-nics"
   s.version     = MachineNics::VERSION
   s.platform    = Gem::Platform::RUBY
+  s.required_ruby_version = '~> 1.9.1'
   s.authors     = ["sathlan"]
   s.email       = ["mypublicaddress-code@ymail.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Creates complex virtual network on Linux and FreeBSD.}
+  s.description = <<-EOF
+     Using a simple YAML description can create tap, bond, vlan and bridge.
+     This is usefull for quicly setting up complex virtual network on a host
+     for use by guest virtual machine.
+EOF
 
   s.rubyforge_project = "machine-nics"
 
