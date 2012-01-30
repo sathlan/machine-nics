@@ -68,6 +68,7 @@ Feature: Create Freebsd network
     Given a file named "desc-vlan-freebsd.yaml" with:
     """
     :machine-1:
+      :vlan10101: :tap102
       :vlan101: :tap101
     """
     When I run `machine-nics -a create -t Freebsd -f desc-vlan-freebsd.yaml -n`
@@ -79,6 +80,12 @@ Feature: Create Freebsd network
       => Create VLAN101 using:
         * sudo ifconfig vlan101 create vlan 101 vlandev tap101
         * sudo ifconfig vlan101 up
+        => Create TAP102 using:
+          * sudo ifconfig tap102 create mtu 1500
+          * sudo ifconfig tap102 up
+      => Create VLAN10101 using:
+        * sudo ifconfig vlan10101 create vlan 101 vlandev tap102
+        * sudo ifconfig vlan10101 up
     """
 
   Scenario: Display the step to create a complex network in Freebsd
