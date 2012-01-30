@@ -1,4 +1,8 @@
 * Machine-Nics
+** Status
+ - [[https://secure.travis-ci.org/sathlan/machine-nics][travis]]: [[https://secure.travis-ci.org/sathlan/machine-nics.png]]
+ - [[https://gemnasium.com/sathlan/machine-nics/][gemnasium]]: [[https://gemnasium.com/sathlan/machine-nics.png]]
+
 ** Description
 
 Setup complex network for use with virtual machines.  Work under
