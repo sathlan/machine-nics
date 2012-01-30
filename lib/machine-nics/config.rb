@@ -33,6 +33,10 @@ module MachineNics
           puts opts
           exit
         end
+        opts.on_head("-v", "--version") do
+          puts "machine-nics version #{MachineNics::VERSION}"
+          exit
+        end
       end
     end
     def dry_run
