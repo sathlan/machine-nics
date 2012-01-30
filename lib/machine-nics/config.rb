@@ -51,14 +51,7 @@ module MachineNics
     end
 
     def parse
-      begin
-        @parser.parse(ARGV)
-      rescue Exception => err
-        err_msg = err.to_s.sub(/^([^:]*)(.*)/) {|msg| $1.upcase + $2}
-        puts err_msg
-        puts @parser
-        exit
-      end
+      @parser.parse(ARGV)
       unless @options[:file]
         puts @parser
         exit
