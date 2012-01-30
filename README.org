@@ -126,13 +126,17 @@ are nil.  For instance this describe the same setup, bridge with two
 interfaces:
 
   1. using a array;
-: :bridge0:
-:   - tap1
-:   - tap2
+     #+begin_sh 
+      :bridge0:
+        - tap1
+        - tap2
+     #+end_sh
   2. using a hash;
-: :bridge0:
-:   :tap1: nil
-:   :tap2: nil
+     #+begin_sh 
+      :bridge0:
+        tap1: nil
+        tap2: nil
+     #+end_sh
 
 The first form is better.
 
