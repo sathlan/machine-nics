@@ -1,4 +1,3 @@
-@wip
 Feature: Destroy Linux network
 
   Scenario: Display the necessary steps to destroy a simple Linux network.
