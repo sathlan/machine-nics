@@ -17,6 +17,8 @@ module MachineNics
         self.extend MachineNics::Actions::Freebsd
       when /linux/i
         self.extend MachineNics::Actions::Linux
+      else
+        throw "Cannot find a working type for #{@type}"
       end
     end
     def self.list_types
