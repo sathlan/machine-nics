@@ -35,18 +35,23 @@ module MachineNics
         cmds
       end
 
-      def destroy(params)
-        cmd = "sudo brctl delif #{params[:name]} destroy"
-        [ cmd ]
-      end
       def tap_destroy(params)
         [ "sudo tunctl -d #{params[:name]}" ]
       end
       def bridge_destroy(params)
         [ "sudo brctl delbr #{params[:name]}"]
       end
-      alias :lagg_destroy :destroy
-      alias :vlan_destroy :destroy
+      def lagg_destroy(params)
+        cmds = []
+        params[:members].each do |nic|
+          cmds.push(%Q!sudo sh -c 'echo -#{nic}        > /sys/class/net/#{params[:name]}/bonding/slaves'!)
+        end
+        cmds.push(%Q!sudo sh -c 'echo "-#{params[:name]}" > /sys/class/net/bonding_masters';!)
+        cmds
+      end
+      def vlan_destroy(params)
+        ["sudo vconfig rem #{params[:members]}.#{params[:vid]}"]
+      end
 
       def tap_empty?(name)
         true

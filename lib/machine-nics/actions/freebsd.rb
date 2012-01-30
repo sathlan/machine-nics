@@ -37,14 +37,14 @@ module MachineNics
       alias :bridge_up :up
       alias :tap_up :up
 
-      def destroy(params)
+      def freebsd_destroy(params)
         cmd = "sudo ifconfig #{params[:name]} destroy"
         [ cmd ]
       end
-      alias :lagg_destroy :destroy
-      alias :vlan_destroy :destroy
-      alias :bridge_destroy :destroy
-      alias :tap_destroy :destroy
+      alias :lagg_destroy :freebsd_destroy
+      alias :vlan_destroy :freebsd_destroy
+      alias :bridge_destroy :freebsd_destroy
+      alias :tap_destroy :freebsd_destroy
       def tap_empty?(name)
         true
       end

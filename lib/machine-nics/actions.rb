@@ -59,5 +59,30 @@ module MachineNics
         [ send(function + '_' + cmd, params), post_cmd ]
       end
     end
+
+    def create(nic, members)
+      dispatch('create', nic, members)
+    end
+
+    def create!(nic, members)
+      cmds = create(nic,members)
+      cmds.flatten.each {|c| `#{c} 2>/dev/null`}
+    end
+
+    def display(action, nic, level, members)
+      chosen_level = level || 0
+
+      cmds = dispatch(action, nic, members)
+      cmds.flatten.each {|c| puts "  "*level + "  * #{c}"}
+    end
+
+    def destroy(nic, members)
+      dispatch('destroy', nic, members)
+    end
+
+    def destroy!(nic, members)
+      cmds = destroy(nic,members)
+      cmds.flatten.each {|c| `#{c} 2>/dev/null`}
+    end
   end
 end
