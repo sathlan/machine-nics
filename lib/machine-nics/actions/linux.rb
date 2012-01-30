@@ -42,15 +42,10 @@ module MachineNics
         [ "sudo brctl delbr #{params[:name]}"]
       end
       def lagg_destroy(params)
-        cmds = []
-        params[:members].each do |nic|
-          cmds.push(%Q!sudo sh -c 'echo -#{nic}        > /sys/class/net/#{params[:name]}/bonding/slaves'!)
-        end
-        cmds.push(%Q!sudo sh -c 'echo "-#{params[:name]}" > /sys/class/net/bonding_masters';!)
-        cmds
+        [ %Q!sudo sh -c 'echo "-#{params[:name]}" > /sys/class/net/bonding_masters';! ]
       end
       def vlan_destroy(params)
-        ["sudo vconfig rem #{params[:members]}.#{params[:vid]}"]
+        ["sudo vconfig rem #{params[:members].first}.#{params[:vid]}"]
       end
 
       def tap_empty?(name)
