@@ -45,7 +45,7 @@ module MachineNics
       function = nic.to_s.sub(/^(?:\/dev\/)?([^0-9_]+)[\d_]+/,'\1')
       name, mtu = name_mtu_from(nic)
 #      name ||= nic
-      mtu ||= 1500
+      mtu ||= infer_mtu_from_child(members)
       vid = nil
       if nic.to_s =~ /vlan/i
         vid = vid_from_name(nic.to_s)
@@ -83,6 +83,11 @@ module MachineNics
     def destroy!(nic, members)
       cmds = destroy(nic,members)
       cmds.flatten.each {|c| `#{c} 2>/dev/null`}
+    end
+
+    def infer_mtu_from_child(nics)
+      return 1500 if nics.empty?
+      nics.map {|nic|(name_mtu_from(nic)[1].to_i || 1500) }.min
     end
   end
 end

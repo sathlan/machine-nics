@@ -7,8 +7,9 @@ module MachineNics
         cmds.push(%Q!sudo sh -c 'echo "layer3+4"    > /sys/class/net/#{params[:name]}/bonding/xmit_hash_policy'!)
         cmds.push(%Q!sudo sh -c 'echo balance-xor   > /sys/class/net/#{params[:name]}/bonding/mode'!)
         cmds.push(%Q!sudo sh -c 'echo 100           > /sys/class/net/#{params[:name]}/bonding/miimon'!)
-        cmds.push(%Q!sudo sh -c 'sudo ip l set dev #{params[:name]} up'!)
+        cmds.push(%Q!sudo ip l set dev #{params[:name]} mtu #{params[:mtu]}!)
         params[:members].each do |nic|
+          cmds.push(%Q!sudo ip l set dev #{nic} down!)
           cmds.push(%Q!sudo sh -c 'echo +#{nic}        > /sys/class/net/#{params[:name]}/bonding/slaves'!)
         end
         cmds

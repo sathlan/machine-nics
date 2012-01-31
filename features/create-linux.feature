@@ -70,8 +70,10 @@ Feature: Create Linux network
         * sudo sh -c 'echo "layer3+4"    > /sys/class/net/lagg0/bonding/xmit_hash_policy'
         * sudo sh -c 'echo balance-xor   > /sys/class/net/lagg0/bonding/mode'
         * sudo sh -c 'echo 100           > /sys/class/net/lagg0/bonding/miimon'
-        * sudo sh -c 'sudo ip l set dev lagg0 up'
+        * sudo ip l set dev lagg0 mtu 1496
+        * sudo ip l set dev tap101 down
         * sudo sh -c 'echo +tap101        > /sys/class/net/lagg0/bonding/slaves'
+        * sudo ip l set dev tap102 down
         * sudo sh -c 'echo +tap102        > /sys/class/net/lagg0/bonding/slaves'
         * sudo ip l set dev lagg0 up
     """
@@ -130,8 +132,10 @@ Feature: Create Linux network
           * sudo sh -c 'echo "layer3+4"    > /sys/class/net/lagg0/bonding/xmit_hash_policy'
           * sudo sh -c 'echo balance-xor   > /sys/class/net/lagg0/bonding/mode'
           * sudo sh -c 'echo 100           > /sys/class/net/lagg0/bonding/miimon'
-          * sudo sh -c 'sudo ip l set dev lagg0 up'
+          * sudo ip l set dev lagg0 mtu 1496
+          * sudo ip l set dev tap101 down
           * sudo sh -c 'echo +tap101        > /sys/class/net/lagg0/bonding/slaves'
+          * sudo ip l set dev tap102 down
           * sudo sh -c 'echo +tap102        > /sys/class/net/lagg0/bonding/slaves'
           * sudo ip l set dev lagg0 up
         => Create TAP202_1496 using:
