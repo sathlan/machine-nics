@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'bundler/setup'
 require "machine-nics/logger"
 require "machine-nics/version"
 require "machine-nics/config"
