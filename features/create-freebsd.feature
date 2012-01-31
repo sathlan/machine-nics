@@ -60,7 +60,7 @@ Feature: Create Freebsd network
           * sudo ifconfig tap101 create mtu 1496
           * sudo ifconfig tap101 up
       => Create LAGG0 using:
-        * sudo ifconfig lagg0 create mtu 1500 laggproto loadbalance laggport tap101 laggport tap102
+        * sudo ifconfig lagg0 create mtu 1496 laggproto loadbalance laggport tap101 laggport tap102
         * sudo ifconfig lagg0 up
     """
 
@@ -110,7 +110,7 @@ Feature: Create Freebsd network
             * sudo ifconfig tap101 create mtu 1496
             * sudo ifconfig tap101 up
         => Create LAGG0 using:
-          * sudo ifconfig lagg0 create mtu 1500 laggproto loadbalance laggport tap101 laggport tap102
+          * sudo ifconfig lagg0 create mtu 1496 laggproto loadbalance laggport tap101 laggport tap102
           * sudo ifconfig lagg0 up
         => Create TAP202_1496 using:
           * sudo ifconfig tap202 create mtu 1496
