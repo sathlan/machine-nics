@@ -64,19 +64,14 @@ module MachineNics
       alias :tap_up :up
 
       def lagg_empty?(params)
-        composite_empty?(params[:name], 'laggport')
+        "cat /sys/class/net/#{params[:name]}/bonding/slaves".split.empty?
       end
       def bridge_empty?(params)
-        composite_empty?(params[:name], 'member')
+        "ls /sys/class/net/#{params[:name]}/brif/".split.empty?
       end
       def vlan_empty?(params)
         true
       end
-      def composite_empty?(name, port_name)
-        cmd = %Q{ifconfig #{name} | awk '/#{port_name}:/{print $2}'}
-        `#{cmd}`.split.empty?
-      end
-
     end
   end
 end
