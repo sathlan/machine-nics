@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    machine-nics (1.0.0)
+    machine-nics (1.0.3)
 
 GEM
   remote: http://rubygems.org/
