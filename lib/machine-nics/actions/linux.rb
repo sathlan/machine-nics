@@ -40,7 +40,7 @@ module MachineNics
         [ "sudo tunctl -d #{params[:name]}" ]
       end
       def bridge_destroy(params)
-        [ "sudo brctl delbr #{params[:name]}"]
+        [ "sudo ip l set #{parmas[:name]} down", "sudo brctl delbr #{params[:name]}"]
       end
       def lagg_destroy(params)
         [ %Q!sudo sh -c 'echo "-#{params[:name]}" > /sys/class/net/bonding_masters';! ]
