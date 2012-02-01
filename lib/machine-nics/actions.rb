@@ -53,7 +53,11 @@ module MachineNics
       nics = members.map {|nic| name_mtu_from(nic)[0]}
       params = {name: name, mtu: mtu, vid: vid, members: nics}
       if cmd.to_s =~ /destroy/
-        [send(function + '_' + cmd, params)]
+        if send(function + '_empty?', params)
+          [send(function + '_' + cmd, params)]
+        else
+          []
+        end
       elsif cmd.to_s =~ /create/
         post_cmd = send(function + '_' + 'up', params)
         [ send(function + '_' + cmd, params), post_cmd ]

@@ -64,10 +64,10 @@ module MachineNics
       alias :tap_up :up
 
       def lagg_empty?(params)
-        "cat /sys/class/net/#{params[:name]}/bonding/slaves".split.empty?
+        `cat /sys/class/net/#{params[:name]}/bonding/slaves`.split.empty?
       end
       def bridge_empty?(params)
-        "ls /sys/class/net/#{params[:name]}/brif/".split.empty?
+        `ls /sys/class/net/#{params[:name]}/brif/`.split.empty?
       end
       def vlan_empty?(params)
         true
