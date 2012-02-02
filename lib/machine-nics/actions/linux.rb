@@ -7,9 +7,9 @@ module MachineNics
         cmds.push(%Q!sudo sh -c 'echo "layer3+4"    > /sys/class/net/#{params[:name]}/bonding/xmit_hash_policy'!)
         cmds.push(%Q!sudo sh -c 'echo balance-xor   > /sys/class/net/#{params[:name]}/bonding/mode'!)
         cmds.push(%Q!sudo sh -c 'echo 100           > /sys/class/net/#{params[:name]}/bonding/miimon'!)
-        cmds.push(%Q!sudo ip l set dev #{params[:name]} mtu #{params[:mtu]}!)
+        cmds.push(%Q!sudo ip link set dev #{params[:name]} mtu #{params[:mtu]}!)
         params[:members].each do |nic|
-          cmds.push(%Q!sudo ip l set dev #{nic} down!)
+          cmds.push(%Q!sudo ip link set dev #{nic} down!)
           cmds.push(%Q!sudo sh -c 'echo +#{nic}        > /sys/class/net/#{params[:name]}/bonding/slaves'!)
         end
         cmds
@@ -32,7 +32,7 @@ module MachineNics
         mtu = params[:mtu]
         cmds = []
         cmds.push(%Q!sudo tunctl -t #{params[:name]}!)
-        cmds.push(%Q!sudo ip l set dev #{params[:name]} mtu #{params[:mtu]}!)
+        cmds.push(%Q!sudo ip link set dev #{params[:name]} mtu #{params[:mtu]}!)
         cmds
       end
 
@@ -40,7 +40,7 @@ module MachineNics
         [ "sudo tunctl -d #{params[:name]}" ]
       end
       def bridge_destroy(params)
-        [ "sudo ip l set #{params[:name]} down", "sudo brctl delbr #{params[:name]}"]
+        [ "sudo ip link set #{params[:name]} down", "sudo brctl delbr #{params[:name]}"]
       end
       def lagg_destroy(params)
         [ %Q!sudo sh -c 'echo "-#{params[:name]}" > /sys/class/net/bonding_masters';! ]
@@ -53,11 +53,11 @@ module MachineNics
         true
       end
       def up(params)
-        cmd = "sudo ip l set dev #{params[:name]} up"
+        cmd = "sudo ip link set dev #{params[:name]} up"
         [ cmd ]
       end
       def vlan_up(params)
-        ["sudo ip l set dev #{params[:members].first}.#{params[:vid]} up" ]
+        ["sudo ip link set dev #{params[:members].first}.#{params[:vid]} up" ]
       end
       alias :lagg_up :up
       alias :bridge_up :up
