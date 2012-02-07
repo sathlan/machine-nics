@@ -21,7 +21,7 @@ module MachineNics
 
       def bridge_create(params)
         cmds = []
-        cmds.push("[ ! -d /sys/class/net/#{params[:name]}/ ] && sudo brctl addbr #{params[:name]}")
+        cmds.push("[ -d /sys/class/net/#{params[:name]}/ ] || sudo brctl addbr #{params[:name]}")
         params[:members].each do |nic|
           cmds.push("sudo brctl addif #{params[:name]} #{nic}")
         end
