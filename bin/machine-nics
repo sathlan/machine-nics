@@ -16,7 +16,8 @@ tree.traverse_df(tree.root, 0) do |nic, level|
     log.debug "=> #{config.action.capitalize} #{nic.upcase} using:"
     cmds.flatten.each {|c| log.debug "  * #{c}"}
     unless config.dry_run
-      out = cmds.flatten.each {|c| `#{c} 2>/dev/null`}
+      cmd = MachineNics::Process.new(cmds)
+      cmd.execute
     end
   end
 end

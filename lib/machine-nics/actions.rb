@@ -4,6 +4,7 @@ require 'machine-nics/logger'
 require 'machine-nics/actions/linux'
 require 'machine-nics/actions/test'
 require 'machine-nics/actions/freebsd'
+require 'machine-nics/process'
 
 module MachineNics
   class Actions
@@ -66,7 +67,8 @@ module MachineNics
 
     def create!(nic, members)
       cmds = create(nic,members)
-      cmds.flatten.each {|c| `#{c} 2>/dev/null`}
+      cmd = MachineNics::Process.new(cmds)
+      cmd.execute
     end
 
     def display(action, nic, level, members)
