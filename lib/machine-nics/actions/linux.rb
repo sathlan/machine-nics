@@ -40,7 +40,7 @@ module MachineNics
         [ "sudo tunctl -d #{params[:name]}" ]
       end
       def bridge_destroy(params)
-        [ "sudo brctl delbr #{params[:name]}"]
+        [ "sudo ip l set #{params[:name]} down", "sudo brctl delbr #{params[:name]}"]
       end
       def lagg_destroy(params)
         [ %Q!sudo sh -c 'echo "-#{params[:name]}" > /sys/class/net/bonding_masters';! ]
@@ -64,19 +64,14 @@ module MachineNics
       alias :tap_up :up
 
       def lagg_empty?(params)
-        composite_empty?(params[:name], 'laggport')
+        `cat /sys/class/net/#{params[:name]}/bonding/slaves`.split.empty?
       end
       def bridge_empty?(params)
-        composite_empty?(params[:name], 'member')
+        `ls /sys/class/net/#{params[:name]}/brif/`.split.empty?
       end
       def vlan_empty?(params)
         true
       end
-      def composite_empty?(name, port_name)
-        cmd = %Q{ifconfig #{name} | awk '/#{port_name}:/{print $2}'}
-        `#{cmd}`.split.empty?
-      end
-
     end
   end
 end

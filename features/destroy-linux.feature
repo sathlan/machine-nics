@@ -32,6 +32,7 @@ Feature: Destroy Linux network
         => Destroy TAP201_1496 using:
           * sudo tunctl -d tap201
       => Destroy BRIDGE0 using:
+        * sudo ip l set bridge0 down
         * sudo brctl delbr bridge0
     """
 
@@ -100,6 +101,7 @@ Feature: Destroy Linux network
         => Destroy TAP201_1496 using:
           * sudo tunctl -d tap201
       => Destroy BRIDGE0 using:
+        * sudo ip l set bridge0 down
         * sudo brctl delbr bridge0
         => Destroy TAP101 using:
           * sudo tunctl -d tap101

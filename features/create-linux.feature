@@ -78,6 +78,38 @@ Feature: Create Linux network
         * sudo ip l set dev lagg0 up
     """
 
+  Scenario: Check that right mtu is chosen for composite nic in Linux network.
+    Given a file named "desc-bond-linux.yaml" with:
+    """
+    :machine-1:
+      :lagg0:
+      - :tap101
+      - :tap102
+    """
+    When I run `machine-nics -a create -t Linux -f desc-bond-linux.yaml -n`
+    Then it should pass with:
+    """
+        => Create TAP102 using:
+          * sudo tunctl -t tap102
+          * sudo ip l set dev tap102 mtu 1500
+          * sudo ip l set dev tap102 up
+        => Create TAP101 using:
+          * sudo tunctl -t tap101
+          * sudo ip l set dev tap101 mtu 1500
+          * sudo ip l set dev tap101 up
+      => Create LAGG0 using:
+        * sudo sh -c 'echo "+lagg0" > /sys/class/net/bonding_masters';
+        * sudo sh -c 'echo "layer3+4"    > /sys/class/net/lagg0/bonding/xmit_hash_policy'
+        * sudo sh -c 'echo balance-xor   > /sys/class/net/lagg0/bonding/mode'
+        * sudo sh -c 'echo 100           > /sys/class/net/lagg0/bonding/miimon'
+        * sudo ip l set dev lagg0 mtu 1500
+        * sudo ip l set dev tap101 down
+        * sudo sh -c 'echo +tap101        > /sys/class/net/lagg0/bonding/slaves'
+        * sudo ip l set dev tap102 down
+        * sudo sh -c 'echo +tap102        > /sys/class/net/lagg0/bonding/slaves'
+        * sudo ip l set dev lagg0 up
+    """
+
   Scenario: Display the necessary steps to create a vlan in Linux network.
     Given a file named "desc-vlan-linux.yaml" with:
     """

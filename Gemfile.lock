@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    machine-nics (1.0.0)
+    machine-nics (1.0.3)
 
 GEM
   remote: http://rubygems.org/
@@ -41,6 +41,7 @@ PLATFORMS
 
 DEPENDENCIES
   aruba (~> 0.4)
+  bundler (~> 1.0)
   cucumber (~> 1.1)
   machine-nics!
   rake
