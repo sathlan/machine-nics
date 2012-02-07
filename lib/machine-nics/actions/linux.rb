@@ -19,11 +19,35 @@ module MachineNics
         cmd = ["sudo vconfig add #{params[:members].first} #{params[:vid]}"]
       end
 
+      # TODO: need to refactore the whole thing: make each nic into a
+      # class would be a good start.
+      def vid_from_name(name)
+        # several vlan with the same vid but not the same name:
+        # vlan10100 vlan10101, ...
+        vid = nil
+        if name.to_s.length > 8
+          l = name.to_s.length - 2 - 4
+          vid = name.to_s[4,l]
+        else
+          vid = name.to_s.gsub(/\D+/,'')
+        end
+        vid
+      end
+      def name_mtu_from(name)
+        name.to_s.match(/(^[^_]+)(?:_(.*))?/).to_a[1,2]
+      end
+
       def bridge_create(params)
         cmds = []
         cmds.push("[ -d /sys/class/net/#{params[:name]}/ ] || sudo brctl addbr #{params[:name]}")
         params[:members].each do |nic|
-          cmds.push("sudo brctl addif #{params[:name]} #{nic}")
+          name = nic
+          unless name.to_s.index('vlan').nil?
+            vid = vid_from_name(name)
+            child_name, mtu = name_mtu_from(params[:tree].children[name.to_sym].first.to_s)
+            name = "#{child_name}.#{vid}"
+          end
+          cmds.push("sudo brctl addif #{params[:name]} #{name}")
         end
         cmds
       end

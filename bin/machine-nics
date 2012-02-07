@@ -11,7 +11,7 @@ actions = MachineNics::Actions.new(config.type)
 tree.traverse_df(tree.root, 0) do |nic, level|
   if level > 0
     log.level = level
-    cmds = actions.dispatch(config.action, nic, tree.children[nic])
+    cmds = actions.dispatch(config.action, nic, tree.children[nic], tree)
     prefix = "  "*level
     log.debug "=> #{config.action.capitalize} #{nic.upcase} using:"
     cmds.flatten.each {|c| log.debug "  * #{c}"}

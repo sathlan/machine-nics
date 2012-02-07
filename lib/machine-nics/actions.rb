@@ -42,8 +42,9 @@ module MachineNics
       name.to_s.match(/(^[^_]+)(?:_(.*))?/).to_a[1,2]
     end
 
-    def dispatch(cmd, nic, members = [])
+    def dispatch(cmd, nic, members = [], tree)
       mtu = 0
+      tree ||= nil
       function = nic.to_s.sub(/^(?:\/dev\/)?([^0-9_]+)[\d_]+/,'\1')
       name, mtu = name_mtu_from(nic)
       mtu = infer_mtu_from_child(members, mtu)
@@ -52,7 +53,7 @@ module MachineNics
         vid = vid_from_name(nic.to_s)
       end
       nics = members.map {|nic| name_mtu_from(nic)[0]}
-      params = {name: name, mtu: mtu, vid: vid, members: nics}
+      params = {name: name, mtu: mtu, vid: vid, members: nics, tree: tree}
       if cmd.to_s =~ /destroy/
         if send(function + '_empty?', params)
           [send(function + '_' + cmd, params)]
@@ -65,12 +66,12 @@ module MachineNics
       end
     end
 
-    def create(nic, members)
-      dispatch('create', nic, members)
+    def create(nic, members, tree)
+      dispatch('create', nic, members, tree)
     end
 
-    def create!(nic, members)
-      cmds = create(nic,members)
+    def create!(nic, members, tree)
+      cmds = create(nic,members, tree)
       cmd = MachineNics::Process.new(cmds)
       cmd.execute
     end

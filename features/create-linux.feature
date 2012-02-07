@@ -40,7 +40,7 @@ Feature: Create Linux network
           * sudo ip link set dev tap201 mtu 1496
           * sudo ip link set dev tap201 up
       => Create BRIDGE0 using:
-        * sudo brctl addbr bridge0
+        * [ -d /sys/class/net/bridge0/ ] || sudo brctl addbr bridge0
         * sudo brctl addif bridge0 tap201
         * sudo brctl addif bridge0 tap202
         * sudo ip link set dev bridge0 up
@@ -141,12 +141,13 @@ Feature: Create Linux network
     """
     :machine-1:
       :bridge0:
+      - :vlan10101: :tap104
       - :tap201_1496
       - :tap202_1496
       - :lagg0:
         - :tap101_1496
         - :tap102_1496
-      :vlan101: :tap101
+      :vlan101: :tap103
     """
     When I run `machine-nics -a create -t Linux -f desc-complex-linux.yaml -n`
     Then it should pass with:
@@ -170,25 +171,33 @@ Feature: Create Linux network
           * sudo ip link set dev tap102 down
           * sudo sh -c 'echo +tap102        > /sys/class/net/lagg0/bonding/slaves'
           * sudo ip link set dev lagg0 up
-        => Create TAP202_1496 using:
-          * sudo tunctl -t tap202
-          * sudo ip link set dev tap202 mtu 1496
-          * sudo ip link set dev tap202 up
+          => Create TAP104 using:
+            * sudo tunctl -t tap104
+            * sudo ip link set dev tap104 mtu 1500
+            * sudo ip link set dev tap104 up
+        => Create VLAN10101 using:
+          * sudo vconfig add tap104 101
+          * sudo ip link set dev tap104.101 up
         => Create TAP201_1496 using:
           * sudo tunctl -t tap201
           * sudo ip link set dev tap201 mtu 1496
           * sudo ip link set dev tap201 up
+        => Create TAP202_1496 using:
+          * sudo tunctl -t tap202
+          * sudo ip link set dev tap202 mtu 1496
+          * sudo ip link set dev tap202 up
       => Create BRIDGE0 using:
-        * sudo brctl addbr bridge0
+        * [ -d /sys/class/net/bridge0/ ] || sudo brctl addbr bridge0
+        * sudo brctl addif bridge0 tap104.101
         * sudo brctl addif bridge0 tap201
         * sudo brctl addif bridge0 tap202
         * sudo brctl addif bridge0 lagg0
         * sudo ip link set dev bridge0 up
-        => Create TAP101 using:
-          * sudo tunctl -t tap101
-          * sudo ip link set dev tap101 mtu 1500
-          * sudo ip link set dev tap101 up
+        => Create TAP103 using:
+          * sudo tunctl -t tap103
+          * sudo ip link set dev tap103 mtu 1500
+          * sudo ip link set dev tap103 up
       => Create VLAN101 using:
-        * sudo vconfig add tap101 101
-        * sudo ip link set dev tap101.101 up
+        * sudo vconfig add tap103 101
+        * sudo ip link set dev tap103.101 up
     """
